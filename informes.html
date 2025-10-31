@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informes - Congregación Tulipanes</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="StylesInformacion.css">
+  <link rel="stylesheet" href="stylesAdm.css">
+  <link rel="stylesheet" href="cardsStyles.css">
+  <link rel="stylesheet" href="modalelim.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <style>
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-danger:hover { background-color: #bb2d3b; }
+
+    /* Modal contraseña borrar todo */
+    #passwordPromptModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 3500;
+    }
+    #passwordPromptModal .modal-content {
+      background: white;
+      width: min(420px, 92vw);
+      padding: 20px;
+      margin: 10vh auto;
+      border-radius: 10px;
+    }
+
+    /* Switch de participación */
+    .switch-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #4CAF50; }
+    input:checked + .slider:before { transform: translateX(26px); }
+
+    /* Form base */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; margin: 0 0 6px; font-weight: 600; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px; /* evita zoom iOS */
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-container">
+      <a href="/Adm.html" class="logo">Administración Tulipanes</a>
+      <button class="mobile-toggle"><i class="fas fa-bars"></i></button>
+      <nav class="nav-menu">
+        <div class="nav-item"><a href="/Informes.html" class="nav-link">Informes</a></div>
+        <div class="nav-item"><a href="/Adm.html" class="nav-link">Administración</a></div>
+        <div class="nav-item"><button class="login-btn">Iniciar Sesión</button></div>
+        <div id="userSection" class="user-section"></div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="loading-screen">
+    <div class="loading-content">
+      <h2>Cargando Informes</h2>
+      <div class="loading-spinner"></div>
+      <p>Conectando con Firebase...</p>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <div class="filters">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Buscar publicador...">
+      </div>
+      <div class="select-wrapper">
+        <select id="groupFilter">
+          <option value="">Todos los grupos</option>
+          <!-- dinámico -->
+        </select>
+      </div>
+      <div class="select-wrapper">
+        <select id="roleFilter">
+          <option value="">Todos los roles</option>
+          <option value="Publicador">Publicador</option>
+          <option value="Precursor Auxiliar">Precursor Auxiliar</option>
+          <option value="Precursor Regular">Precursor Regular</option>
+        </select>
+      </div>
+      <div class="select-wrapper">
+        <select id="participationFilter">
+          <option value="">Todos</option>
+          <option value="true">Participó</option>
+          <option value="false">No participó</option>
+        </select>
+      </div>
+      <button class="btn-danger" id="deleteAllReportsBtn">
+        <i class="fas fa-trash"></i> Borrar Todos los Informes
+      </button>
+    </div>
+
+    <div class="stat-cards" id="summaryStats"></div>
+    <div class="informes-grid" id="informesList"></div>
+  </div>
+
+  <div class="login-modal" id="loginModal"></div>
+  <div class="login-modal" id="registerModal"></div>
+  <div class="login-modal" id="resetPasswordModal"></div>
+
+  <!-- Scripts principales -->
+  <script src="/ScriptLogin.js" type="module"></script>
+  <script src="/informes.js" type="module"></script>
+  <script src="/script.js" type="module"></script>
+  <script src="/mobile.js"></script>
+
+  <!-- ===== Modal de Edición (nuevo, responsive) ===== -->
+  <div class="modal" id="editReportModal" role="dialog" aria-modal="true" aria-labelledby="editReportTitle">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <button type="button" class="close-modal" aria-label="Cerrar">×</button>
+        <h2 id="editReportTitle">Editar Informe</h2>
+
+        <form id="editReportForm" novalidate>
+          <div class="form-group">
+            <label for="editName">Nombre:</label>
+            <input type="text" id="editName" name="editName" required>
+          </div>
+
+          <div class="form-group switch-container">
+            <label for="editParticipated">¿Participó en el ministerio?</label>
+            <label class="switch">
+              <input type="checkbox" id="editParticipated" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="editHours">Horas:</label>
+              <input type="number" id="editHours" step="0.1" required>
+            </div>
+            <div class="form-group">
+              <label for="editStudies">Cursos Bíblicos:</label>
+              <input type="number" id="editStudies" required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="editGroup">Grupo:</label>
+              <select id="editGroup" required>
+                <!-- opciones se cargan por JS -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editRole">Rol:</label>
+              <select id="editRole" required>
+                <option value="Publicador">Publicador</option>
+                <option value="Precursor Auxiliar">Precursor Auxiliar</option>
+                <option value="Precursor Regular">Precursor Regular</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editDate">Fecha:</label>
+            <input type="date" id="editDate" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editObservations">Notas:</label>
+            <textarea id="editObservations" rows="3"></textarea>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="submit-btn">Guardar Cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- ===== Fin modal edición ===== -->
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Modal Confirmación borrar (ya existente) -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <p id="confirmMessage"></p>
+      <div class="modal-buttons">
+        <button class="btn-secondary" id="confirmCancel">Cancelar</button>
+        <button class="btn-danger" id="confirmDelete">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal contraseña borrar todo (ya existente) -->
+  <div id="passwordPromptModal">
+    <div class="modal-content">
+      <h3>Eliminar todos los informes</h3>
+      <p>Ingrese la contraseña especial:</p>
+      <input type="password" id="deletePassword" placeholder="Contraseña">
+      <div class="modal-buttons" style="margin-top: 15px;">
+        <button class="btn-secondary" id="cancelDelete">Cancelar</button>
+        <button class="btn-danger" id="confirmDeleteAll">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Borrado total con contraseña =====
+    const SPECIAL_PASSWORD = "Tulipanes2025";
+    const deleteAllBtn = document.getElementById('deleteAllReportsBtn');
+    const passwordModal = document.getElementById('passwordPromptModal');
+    const confirmDeleteAllBtn = document.getElementById('confirmDeleteAll');
+    const cancelDeleteBtn = document.getElementById('cancelDelete');
+
+    deleteAllBtn.addEventListener('click', () => {
+      passwordModal.style.display = 'block';
+      document.getElementById('deletePassword').value = '';
+    });
+    cancelDeleteBtn.addEventListener('click', () => {
+      passwordModal.style.display = 'none';
+    });
+    confirmDeleteAllBtn.addEventListener('click', async () => {
+      const enteredPassword = document.getElementById('deletePassword').value;
+      if (enteredPassword === SPECIAL_PASSWORD) {
+        try {
+          if (typeof showLoading === 'function') showLoading();
+          const reportsRef = firebase.database().ref('users');
+          await reportsRef.remove();
+          passwordModal.style.display = 'none';
+          showToast('Todos los informes han sido eliminados', 'success');
+          setTimeout(() => window.location.reload(), 1500);
+        } catch (error) {
+          console.error("Error deleting reports:", error);
+          showToast('Error al eliminar los informes', 'error');
+        } finally {
+          if (typeof hideLoading === 'function') hideLoading();
+        }
+      } else {
+        showToast('Contraseña incorrecta', 'error');
+        document.getElementById('deletePassword').value = '';
+      }
+    });
+
+    // ===== Toggle participación: deshabilita/pone en 0 horas/estudios =====
+    document.addEventListener('DOMContentLoaded', function () {
+      const participatedToggle = document.getElementById('editParticipated');
+      if (participatedToggle) {
+        participatedToggle.addEventListener('change', function () {
+          const hoursField = document.getElementById('editHours');
+          const studiesField = document.getElementById('editStudies');
+          if (!this.checked) {
+            hoursField.value = 0;
+            studiesField.value = 0;
+            hoursField.disabled = true;
+            studiesField.disabled = true;
+          } else {
+            hoursField.disabled = false;
+            studiesField.disabled = false;
+          }
+        });
+      }
+    });
+
+    // Toast simple
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      const container = document.getElementById('toast-container');
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
+
+  <!-- ====== CSS específico del modal de edición (al final para mayor prioridad) ====== -->
+  <style>
+    /* Overlay del modal edición */
+    #editReportModal{
+      display:none;              /* .is-open -> display:block */
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      z-index: 4000;             /* encima del header */
+      padding: clamp(12px, 2vw, 24px);
+      overflow:auto;             /* si el diálogo es muy alto */
+    }
+    #editReportModal.is-open{ display:block; }
+
+    /* Caja centrada */
+    #editReportModal .modal-dialog{
+      max-width: min(720px, 92vw);
+      margin: auto;
+    }
+    #editReportModal .modal-content{
+      background:#fff;
+      border-radius:12px;
+      padding: clamp(16px, 2.5vw, 28px);
+      box-shadow: 0 12px 34px rgba(0,0,0,.25);
+      max-height: 90dvh;         /* clave en móviles */
+      overflow:auto;             /* scroll interno */
+    }
+
+    /* Cierre */
+    #editReportModal .close-modal{
+      position: sticky;
+      top: -8px;
+      float: right;
+      font-size: 28px;
+      line-height: 1;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color:#555;
+    }
+
+    #editReportModal .form-buttons{
+      position: sticky;
+      bottom: -8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      background: linear-gradient(180deg, transparent, #fff 40%);
+    }
+    #editReportModal .submit-btn{
+      display:inline-block;
+      padding:10px 16px;
+      border:0;
+      border-radius:999px;
+      background:#6c2bd9;
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+    }
+    #editReportModal .submit-btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+    /* Grid 2 columnas en pantallas medianas+ */
+    @media (min-width: 700px){
+      #editReportModal .grid-2{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:12px;
+      }
+    }
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior: auto !important; }
+    }
+  </style>
+
+  <!-- ====== JS control robusto del modal de edición ====== -->
+  <script>
+    (function(){
+      const modal = document.getElementById('editReportModal');
+      if(!modal) return;
+
+      const dialog = modal.querySelector('.modal-content');
+      const btnClose = modal.querySelector('.close-modal');
+
+      function openEditModal(){
+        modal.classList.add('is-open');
+        // Bloquear scroll del documento mientras el modal esté abierto
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+      }
+      function closeEditModal(){
+        modal.classList.remove('is-open');
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
+
+      // Cierre por overlay
+      modal.addEventListener('click', (e) => { if(e.target === modal) closeEditModal(); });
+      // Evitar burbuja dentro del diálogo
+      if(dialog){ dialog.addEventListener('click', (e)=> e.stopPropagation()); }
+      // Botón cerrar
+      if(btnClose){ btnClose.addEventListener('click', closeEditModal); }
+      // ESC
+      window.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape' && modal.classList.contains('is-open')) closeEditModal();
+      });
+
+      // Rellenar dinámico de grupos (si uniqueGroups existe globalmente)
+      const groupSelect = document.getElementById('editGroup');
+      if (groupSelect && window.uniqueGroups && typeof uniqueGroups[Symbol.iterator] === 'function'){
+        groupSelect.innerHTML = [...uniqueGroups].map(g => `<option value="${g}">${g}</option>`).join('');
+      }
+
+      // API pública para usar desde informes.js u otros
+      window.EditReportModal = {
+        open: openEditModal,
+        close: closeEditModal,
+        fill(data = {}) {
+          const $ = (id) => document.getElementById(id);
+          if($('editName'))         $('editName').value           = data.name ?? '';
+          if($('editParticipated')) $('editParticipated').checked = !!data.participated;
+          if($('editHours'))        $('editHours').value          = data.hours ?? 0;
+          if($('editStudies'))      $('editStudies').value        = data.studies ?? 0;
+          if($('editGroup') && data.group) $('editGroup').value   = data.group;
+          if($('editRole') && data.role)   $('editRole').value    = data.role;
+          if($('editDate') && data.date)   $('editDate').value    = data.date; // yyyy-mm-dd
+          if($('editObservations')) $('editObservations').value   = data.notes ?? '';
+        }
+      };
+
+      // Ejemplo (comenta/borra): window.EditReportModal.open();
+    })();
+  </script>
+
+</body>
+</html>

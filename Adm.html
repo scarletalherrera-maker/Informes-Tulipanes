@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración - Congregación Tulipanes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="StylesInformacion.css">
+    <link rel="stylesheet" href="stylesAdm.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="secretario.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+</head>
+<body>
+
+  <header class="site-header">
+  <div class="header-container">
+    <a href="/Adm.html" class="logo">Administración Tulipanes</a>
+    <button class="mobile-toggle"><i class="fas fa-bars"></i></button>
+    <nav class="nav-menu">
+      <div class="nav-item"><a href="/Informes.html" class="nav-link">Informes</a></div>
+      <div class="nav-item"><a href="/Adm.html" class="nav-link">Administración</a></div>
+      <div class="nav-item"><button class="login-btn">Iniciar Sesión</button></div>
+      <div id="userSection" class="user-section"></div>
+    </nav>
+  </div>
+</header>
+
+      
+
+    <div class="loading-screen">
+        <div class="loading-content">
+            <h1>Administración Tulipanes</h1>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content admin-container">
+            <h1 class="admin-title">Panel de Administración</h1>
+            <p>Gestión y control de la información de la congregación</p>
+
+            <div class="admin-alert" id="adminAlert"></div>
+
+            <div class="admin-cards-container">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="admin-card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h2 class="admin-card-title">Informes en Tiempo Real</h2>
+                    </div>
+                    <div class="admin-card-content">
+                        <p>Visualiza los datos más recientes de la congregación actualizados en tiempo real.</p>
+                        <a class="secretary-login-btn"  href="./informes.html">Informes</a>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="admin-card-icon">
+                            <i class="fas fa-file-download"></i>
+                        </div>
+                        <h2 class="admin-card-title">Descargar Informes</h2>
+                    </div>
+                    <div class="admin-card-content">
+                        <p>Genera y descarga informes en diferentes formatos para su análisis y archivo.</p>
+                        <div class="download-options">
+                            <a class="download-btn pdf-btn" id="downloadPdf" 
+                               href="https://docs.google.com/spreadsheets/d/1QcE0-irIMk-h6M0RlyqxmTMimn4vos4IIKvZamBbIQ0/export?format=pdf" 
+                               download target="_blank">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </a>
+                            <a class="download-btn excel-btn" id="downloadExcel" 
+                               href="https://docs.google.com/spreadsheets/d/1QcE0-irIMk-h6M0RlyqxmTMimn4vos4IIKvZamBbIQ0/export?format=xlsx" 
+                               download target="_blank">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+    <div class="login-modal" id="loginModal">
+        </div>
+
+    <div class="login-modal" id="registerModal">
+        </div>
+
+    <div class="login-modal" id="resetPasswordModal">
+        </div>
+    <div id="folderViewer" style="width:100%; height:400px;">
+        </div>
+<script src="/mobile.js" type="module"></script>
+<script src="/ScriptLogin.js" type="module"></script>
+<script src="/script.js" type="module"></script>
+<script src="/secretario.js" type="module"></script>
+
+</body>
+</html>
+

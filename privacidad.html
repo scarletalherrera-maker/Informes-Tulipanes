@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+
+  <title>Privacidad — Congregación Arrayanes</title>
+  <meta name="description" content="Política de Privacidad de Congregación Arrayanes: qué datos recopilamos, para qué, y tus derechos." />
+  <meta name="theme-color" content="#2563EB" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Privacidad — Congregación Arrayanes" />
+  <meta property="og:description" content="Conoce cómo tratamos tus datos y el recordatorio local (sin cookies de seguimiento)." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://congregaciontulipanes.netlify.app/privacidad.html" />
+  <meta property="og:image" content="/assets/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+  <!-- Loader minimalista (puntitos) y estilos de tabla -->
+  <style>
+    .loading-screen {
+      background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+    .loading-title { font-weight: 700; letter-spacing: .3px; margin: 0 0 .75rem 0; }
+    .dot-loader { display: inline-flex; gap: .4rem; align-items: center; justify-content: center; }
+    .dot-loader .dot {
+      width: .55rem; height: .55rem; border-radius: 50%; background: #fff; opacity: .7;
+      animation: dotBlink 1.4s infinite ease-in-out;
+    }
+    .dot:nth-child(2){ animation-delay: .15s; } .dot:nth-child(3){ animation-delay: .3s; }
+    @keyframes dotBlink { 0%,80%,100%{ transform: scale(0.6); opacity:.5 } 40%{ transform: scale(1); opacity:1 } }
+
+    .policy { max-width: 900px; margin: 0 auto; }
+    .policy h1 { margin-bottom: .25rem; }
+    .muted { color: var(--secondary-color); font-size: .95rem; margin-bottom: 1.5rem; }
+    .policy section {
+      background: var(--background-color-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem 1.25rem;
+      margin: 1rem 0;
+    }
+    body.dark-mode .policy section { border-color: #3a3f44; }
+    .policy h2 { margin: 0 0 .75rem 0; font-size: 1.15rem; }
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: rgba(0,0,0,.06); padding: .1rem .35rem; border-radius: .3rem;
+    }
+    .note { border-left: 4px solid var(--accent-color); background: var(--notice-background); }
+    .list-tight { margin: .25rem 0 .5rem 1rem; } .list-tight li { margin: .15rem 0; }
+
+    /* Tabla responsive */
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--background-color-secondary);
+    }
+    body.dark-mode .table-wrap { border-color: #3a3f44; }
+    table.data-table {
+      width: 100%; border-collapse: collapse; min-width: 720px;
+    }
+    .data-table th, .data-table td {
+      padding: .85rem .9rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-color);
+    }
+    body.dark-mode .data-table th, body.dark-mode .data-table td { border-color: #3a3f44; }
+    .data-table thead th {
+      background: rgba(0,0,0,.04);
+      font-weight: 700;
+    }
+    body.dark-mode .data-table thead th { background: rgba(255,255,255,.05); }
+    .data-table tbody tr:hover { background: rgba(0,0,0,.03); }
+    body.dark-mode .data-table tbody tr:hover { background: rgba(255,255,255,.03); }
+    .badge {
+      display: inline-block; padding: .2rem .5rem; border-radius: .35rem; font-size: .85rem;
+      background: rgba(37, 99, 235, .12); color: #1b5acf;
+    }
+    body.dark-mode .badge { background: rgba(93,130,193,.22); color: #dbe7ff; }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla de carga -->
+  <div class="loading-screen" aria-hidden="true">
+    <div>
+      <h1 class="loading-title">Congregación Tulipanes</h1>
+      <div class="dot-loader" aria-label="Cargando">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="dot" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="main-content">
+    <!-- Header -->
+    <header>
+      <div class="header-container">
+        <a href="/index.html" class="logo">Congregación Tulipanes</a>
+
+        <button class="mobile-toggle"
+                aria-label="Abrir menú"
+                aria-controls="primary-nav"
+                aria-expanded="false">
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+
+        <nav class="nav-menu" id="primary-nav" aria-label="Principal">
+          <div class="nav-item">
+            <a href="/Informacion.html" class="nav-link">Información</a>
+          </div>
+          <div class="nav-item">
+            <a href="/privacidad.html" class="nav-link active" aria-current="page">Privacidad</a>
+          </div>
+          <div class="nav-item">
+            <button class="dark-mode-toggle" aria-pressed="false">
+              <i class="fas fa-moon" aria-hidden="true"></i>
+              <span>Modo Oscuro</span>
+            </button>
+          </div>
+          <div class="nav-item">
+            <button class="login-btn">Iniciar Sesión</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido -->
+    <div class="content policy">
+      <h1>Política de Privacidad</h1>
+      <p class="muted">Última actualización: <strong>2025-09-30</strong></p>
+
+      <section class="note">
+        <p>
+          Para facilitar el uso (sobre todo a personas mayores), este sitio te muestra
+          un recordatorio local de si ya enviaste tu informe del mes. <strong>No usamos cookies de seguimiento</strong>:
+          el recordatorio se guarda solo en tu navegador usando <span class="kbd">localStorage</span>.
+        </p>
+      </section>
+
+      <!-- NUEVA TABLA DE RESUMEN -->
+      <section>
+        <h2>Resumen del tratamiento de datos</h2>
+        <div class="table-wrap" role="region" aria-label="Resumen de tratamientos" tabindex="0">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tratamiento</th>
+                <th>Datos</th>
+                <th>Finalidad</th>
+                <th>Base legal</th>
+                <th>Conservación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge">Informe mensual (sin login)</span></td>
+                <td>
+                  nombre, rol, horas, cursosBiblicos, participo, superintendente, notas, fechaEnvio
+                </td>
+                <td>Recibir y organizar informes de servicio.</td>
+                <td>Consentimiento; interés legítimo en la organización interna.</td>
+                <td>En Firebase RTDB hasta corrección/eliminación por responsables.</td>
+              </tr>
+              <tr>
+                <td><span class="badge">Cuentas admin</span></td>
+                <td>
+                  email, contraseña (Firebase Auth), metadatos de invitación/UID
+                </td>
+                <td>Acceso al panel de administración.</td>
+                <td>Ejecución de medidas precontractuales/contractuales.</td>
+                <td>Mientras exista la cuenta o hasta solicitud de baja.</td>
+              </tr>
+              <tr>
+                <td><span class="badge">Recordatorio local</span></td>
+                <td>
+                  Marca local <span class="kbd">ca_lastSubmit</span> (fecha/hora) o “pendiente”
+                </td>
+                <td>Ayudar a recordar si ya enviaste el informe.</td>
+                <td>Interés legítimo en la usabilidad del servicio.</td>
+                <td>En tu navegador hasta que borres datos del sitio.</td>
+              </tr>
+              <tr>
+                <td><span class="badge">Formulario de contacto</span></td>
+                <td>nombre, email, mensaje</td>
+                <td>Responder consultas y sugerencias.</td>
+                <td>Consentimiento (envío del formulario).</td>
+                <td>Según necesidades de seguimiento; luego se elimina/anonimiza.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- /TABLA -->
+
+      <section>
+        <h2>1. Responsable del tratamiento</h2>
+        <p><strong>Congregación Arrayanes</strong> (proyecto personal de Leonardo González).<br />
+        Contacto: <em>
+        </em></p>
+      </section>
+
+      <section>
+        <h2>2. Qué datos recopilamos</h2>
+        <p><strong>2.1. Formularios de informe (sin login)</strong></p>
+        <ul class="list-tight">
+          <li>nombre, rol (Publicador / Precursor Auxiliar / Precursor Regular)</li>
+          <li>horas, cursosBiblicos, participo (Sí/No)</li>
+          <li>superintendente, notas, fechaEnvio</li>
+        </ul>
+        <p class="muted">
+          Se guardan en <strong>Firebase Realtime Database</strong> bajo rutas tipo:
+          <span class="kbd">users/{idAleatorio}</span>.
+        </p>
+
+        <p><strong>2.2. Cuentas de administración (solo panel admin)</strong></p>
+        <ul class="list-tight">
+          <li>email, contraseña (gestionada por Firebase Authentication)</li>
+          <li>metadatos internos (p.ej., UID de invitación y/o marca administrativa)</li>
+        </ul>
+
+        <p><strong>2.3. Recordatorio local “¿ya enviaste tu informe?”</strong></p>
+        <ul class="list-tight">
+          <li>Guardamos <em>solo en tu dispositivo</em> una marca como <span class="kbd">ca_lastSubmit</span> con fecha/hora del último envío o estado “pendiente”.</li>
+          <li>No es una cookie, no se comparte con terceros y no se envía al servidor.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. Para qué usamos la información</h2>
+        <ul class="list-tight">
+          <li>Prestar el servicio: recibir y organizar informes mensuales.</li>
+          <li>Gestión interna: consulta/edición por responsables autorizados.</li>
+          <li>Usabilidad: mostrar el recordatorio local (ver 2.3) en tu navegador.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>4. Base jurídica</h2>
+        <ul class="list-tight">
+          <li>Consentimiento (al enviar el formulario).</li>
+          <li>Interés legítimo (organización y registro de informes de servicio).</li>
+          <li>Medidas precontractuales/contractuales (solo cuentas admin).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. Conservación y ubicación</h2>
+        <ul class="list-tight">
+          <li><strong>Firebase Realtime Database:</strong> mantenemos los informes hasta su corrección o eliminación por los responsables.</li>
+          <li><strong>localStorage:</strong> permanece en tu navegador hasta que borres datos del sitio o restaures el dispositivo.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>6. Destinatarios</h2>
+        <ul class="list-tight">
+          <li>Google/Firebase (infraestructura de base de datos y autenticación).</li>
+          <li>Netlify (hosting; si usas su formulario de contacto).</li>
+        </ul>
+        <p>No vendemos tus datos ni los compartimos con fines publicitarios.</p>
+      </section>
+
+      <section>
+        <h2>7. Seguridad</h2>
+        <ul class="list-tight">
+          <li>Acceso restringido al panel admin.</li>
+          <li>Reglas de seguridad en Firebase para validar los campos esperados.</li>
+          <li>Cifrado en tránsito mediante HTTPS.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>8. Tus derechos</h2>
+        <p>
+          Puedes solicitar acceso, rectificación o eliminación de tu informe.<br />
+          Escríbenos a <em></em> indicando tu nombre, mes y superintendente para localizarlo.
+        </p>
+        <p>
+          Puedes borrar el recordatorio local desde los ajustes del navegador (Borrar datos del sitio).
+        </p>
+      </section>
+
+      <section>
+        <h2>9. Cookies</h2>
+        <p>
+          No utilizamos cookies de seguimiento. El aviso de “pendiente de envío” usa
+          <span class="kbd">localStorage</span> (solo en tu navegador). Si lo desactivas, el sitio funciona,
+          pero no recordará si ya enviaste tu informe.
+        </p>
+      </section>
+
+      <section>
+        <h2>10. Cambios en esta política</h2>
+        <p>Publicaremos aquí cualquier actualización. Si los cambios son importantes, lo indicaremos en el sitio.</p>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3>Sobre el Proyecto</h3>
+          <p>
+            Este sitio fue desarrollado por Leonardo González como un esfuerzo personal por mejorar la gestión y
+            organización de servicios comunitarios. Actualmente en constante mejora y expansión.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Enlaces Rápidos</h3>
+          <ul class="footer-links">
+            <li><a href="/index.html">Inicio</a></li>
+            <li><a href="/Informacion.html">Información</a></li>
+            <li><a href="/privacidad.html" aria-current="page">Privacidad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Sección remodelada en 2025. Todos los derechos reservados © <span id="year"></span> | Leonardo González</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts del proyecto -->
+  <script src="/ScriptLogin.js" defer></script>
+  <script src="/mobile.js" defer></script>
+  <script src="/script.js" defer></script>
+
+  <!-- Helpers de UI de esta página -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Loader → contenido
+      setTimeout(() => {
+        document.querySelector('.loading-screen')?.classList.add('hidden');
+        document.querySelector('.main-content')?.classList.add('visible');
+      }, 700);
+
+      // Año dinámico
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+
+      // Menú móvil accesible (por si mobile.js aún no cargó)
+      const toggle = document.querySelector('.mobile-toggle');
+      const nav    = document.getElementById('primary-nav');
+      if (toggle && nav) {
+        toggle.addEventListener('click', () => {
+          const on = !nav.classList.contains('active');
+          nav.classList.toggle('active', on);
+          toggle.setAttribute('aria-expanded', String(on));
+        });
+      }
+
+      // Modo oscuro accesible
+      const darkBtn = document.querySelector('.dark-mode-toggle');
+      if (darkBtn) {
+        const apply = (on) => {
+          document.body.classList.toggle('dark-mode', on);
+          darkBtn.setAttribute('aria-pressed', String(on));
+          const icon = darkBtn.querySelector('i');
+          const text = darkBtn.querySelector('span');
+          if (on) {
+            icon && (icon.classList.remove('fa-moon'), icon.classList.add('fa-sun'));
+            text && (text.textContent = 'Modo Claro');
+          } else {
+            icon && (icon.classList.remove('fa-sun'), icon.classList.add('fa-moon'));
+            text && (text.textContent = 'Modo Oscuro');
+          }
+        };
+        darkBtn.addEventListener('click', () => apply(!document.body.classList.contains('dark-mode')));
+      }
+    });
+  </script>
+</body>
+</html>

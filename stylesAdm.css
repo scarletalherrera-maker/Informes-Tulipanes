@@ -1,0 +1,233 @@
+/* Estilos específicos para la página de administración */
+  .admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.admin-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.admin-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #4a6fa5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 20px;
+}
+
+.admin-card-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+}
+
+.realtime-data {
+    height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.data-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+.data-item:last-child {
+    border-bottom: none;
+}
+
+.download-options {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.download-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.3s;
+}
+
+.download-btn:hover {
+    opacity: 0.9;
+}
+
+.pdf-btn {
+    background: #e74c3c;
+}
+
+.excel-btn {
+    background: #2ecc71;
+}
+
+.restricted-access-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.secretary-login-btn {
+    background: #4d7cff;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.secretary-login-btn:hover {
+    background: #4d59ff;
+}
+
+.secretary-content {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 5px;
+}
+
+.admin-alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Agregar esto a tu archivo stylesAdm.css */
+.secretary-logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.secretary-logout-btn:hover {
+    background-color: #c0392b;
+}
+
+.secretary-content {
+    transition: all 0.3s ease;
+}
+
+.folder-container {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.folder-container h3 {
+    margin-top: 0;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.folder-container iframe {
+    border: none;
+    min-height: 400px;
+    background: #fff;
+}
+
+#driveFoldersList {
+    list-style: none;
+    padding: 0;
+}
+
+#driveFoldersList li {
+    margin-bottom: 30px;
+}
+
+.admin-alert {
+    display: none;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.alert-error {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+
+
+@media (max-width: 768px) {
+    .admin-cards-container {
+        grid-template-columns: 1fr;
+    }
+}

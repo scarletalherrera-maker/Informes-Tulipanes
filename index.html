@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Congregación Tulipanes</title>
+  <meta name="description" content="Envía tu informe mensual de servicio de forma sencilla y privada. Acceso para publicadores y precursores.">
+  <meta name="theme-color" content="#2563EB">
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Congregación Tulipanes — Informe de Servicio">
+  <meta property="og:description" content="Plataforma para enviar informes mensuales con enfoque en privacidad y facilidad de uso.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://congregaciontulipanes.netlify.app/">
+  <meta property="og:image" content="/assets/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styleLogin.css">
+  <link rel="stylesheet" href="StylesInformacion.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <!-- Firebase v8 (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js" defer></script>
+
+  <!-- Utilidades -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+</head>
+<body>
+  <!-- Pantalla de carga -->
+  <div class="loading-screen" aria-hidden="true">
+    <div class="loading-content" role="status" aria-live="polite">
+      <h1>Bienvenido a Congregación Tulipanes</h1>
+      <div class="loading-spinner" aria-label="Cargando"></div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="main-content">
+    <!-- Header -->
+    <header>
+      <div class="header-container">
+        <a href="/index.html" class="logo">Congregación Tulipanes</a>
+
+        <button class="mobile-toggle"
+                aria-label="Abrir menú"
+                aria-controls="primary-nav"
+                aria-expanded="false">
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+
+        <nav class="nav-menu" id="primary-nav" aria-label="Principal">
+          <!-- Eliminado: enlace a Grupos de Servicio -->
+          <div class="nav-item">
+            <a href="/Informacion.html" class="nav-link">Información</a>
+          </div>
+          <div class="nav-item">
+            <button class="dark-mode-toggle" aria-pressed="false">
+              <i class="fas fa-moon" aria-hidden="true"></i>
+              <span>Modo Oscuro</span>
+            </button>
+          </div>
+          <div class="nav-item">
+            <button class="login-btn">Iniciar Sesión</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido con Formulario -->
+    <div class="content">
+      <h1>Informe de Servicio</h1>
+      <p>Por favor, complete el siguiente formulario con los detalles de su servicio del mes.</p>
+
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Informe Mensual de Servicio</h2>
+          <p id="mesServicio" style="font-weight:bold;"></p>
+
+          <!-- NUEVO: Aviso de pendientes por enviar -->
+          <p id="pendientesBadge" style="font-weight:bold; margin:.25rem 0;"></p>
+
+          <!-- NUEVO: Recordatorio de que no se ha enviado el informe del mes -->
+          <div id="recordatorioEnvio"
+               style="display:none; margin:.5rem 0; padding:.75rem 1rem; border-radius:10px; background:#fff3cd; color:#664d03;">
+            <strong>Recordatorio:</strong>
+            <span id="recordatorioTexto"></span>
+          </div>
+
+          <p>Complete todos los campos requeridos</p>
+        </div>
+
+        <!-- Avisos por Rol -->
+        <div id="publisherNotice" class="role-notice" style="display:none">
+          <h3>Aviso</h3>
+          <p>Has seleccionado la opción <strong>"Publicador"</strong>.</p>
+          <ol>
+            <li>Indique si participó en el ministerio durante el mes.</li>
+            <li>Capture el número de cursos bíblicos; los demás campos se deshabilitan.</li>
+          </ol>
+        </div>
+
+        <div id="auxiliaryNotice" class="role-notice" style="display:none">
+          <h3>Aviso</h3>
+          <p>Has seleccionado la opción <strong>"Precursor Auxiliar"</strong>.</p>
+          <ol>
+            <li>Indique el número de horas dedicadas al ministerio.</li>
+            <li>Indique si participó en el ministerio durante el mes.</li>
+            <li>Capture el número de cursos bíblicos.</li>
+          </ol>
+        </div>
+
+        <div id="regularNotice" class="role-notice" style="display:none">
+          <h3>Aviso</h3>
+          <p>Has seleccionado la opción <strong>"Precursor Regular"</strong>.</p>
+          <ol>
+            <li>Indique el número de horas dedicadas al ministerio.</li>
+            <li>Indique si participó en el ministerio durante el mes.</li>
+            <li>Capture el número de cursos bíblicos.</li>
+          </ol>
+        </div>
+
+        <form id="serviceForm" novalidate>
+          <div class="form-group">
+            <label for="fullName"><strong>Nombre Completo:</strong></label>
+            <input type="text" id="fullName" name="fullName" class="form-control" required autocomplete="name">
+          </div>
+
+          <div class="form-group">
+            <label for="role"><strong>Rol:</strong></label>
+            <select id="role" name="role" class="form-select" required>
+              <option value="" disabled selected>Seleccione una opción</option>
+              <option value="publisher">Publicador</option>
+              <option value="auxiliary">Precursor Auxiliar</option>
+              <option value="regular">Precursor Regular</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="hours"><strong>Número de Horas:</strong></label>
+            <input type="number" id="hours" name="hours" class="form-control" min="0" inputmode="decimal" required>
+          </div>
+
+          <div class="form-group">
+            <label for="bibleCourses"><strong>Número de Cursos Bíblicos:</strong></label>
+            <input type="number" id="bibleCourses" name="bibleCourses" class="form-control" min="0" required>
+          </div>
+
+          <div class="form-group" role="group" aria-labelledby="predicacion-label">
+            <p id="predicacion-label"><strong>Participó en alguna faceta de la predicación durante el mes:</strong></p>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="predicacion" value="si">
+                <span class="radio-label">Sí, participé</span>
+                <span class="radio-help-text">Marque si realizó alguna actividad este mes</span>
+              </label>
+
+              <label class="radio-option">
+                <input type="radio" name="predicacion" value="no" class="negative-option">
+                <span class="radio-label">No participé</span>
+                <span class="radio-help-text">Seleccione si no pudo realizar actividades</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="superintendent"><strong>Superintendente de Servicio:</strong></label>
+            <select id="superintendent" name="superintendent" class="form-select" required>
+              <option value="" disabled selected>Seleccione una opción</option>
+              <option value="David Torres.G Grupo 1">David Torres.G Grupo 1</option>
+              <option value="Jorge Moreno.L Grupo 2">Jorge Moreno.L Grupo 2</option>
+              <option value="Abel Abrego.M Grupo 3">Abel Abrego.M Grupo 3</option>
+              <option value="Luis Muñoz.P Grupo 4">Luis Muñoz.P Grupo 4</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notes"><strong>Notas:</strong></label>
+            <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">Enviar Informe</button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3>Sobre el Proyecto</h3>
+          <p>
+            Este sitio fue desarrollado por Leonardo González como un esfuerzo personal por mejorar la gestión y
+            organización de servicios comunitarios. Actualmente en constante mejora y expansión.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Enlaces Rápidos</h3>
+          <ul class="footer-links">
+            <li><a href="/index.html">Inicio</a></li>
+            <!-- Eliminado: enlace a Grupos de Servicio -->
+            <li><a href="/Informacion.html">Información</a></li>
+            <li><a href="/privacidad.html">Privacidad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Sección remodelada en 2025. Todos los derechos reservados <span id="year"></span> | Leonardo González</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal de Inicio de Sesión -->
+  <div class="login-modal" id="loginModal" aria-hidden="true" role="dialog" aria-labelledby="login-title">
+    <div class="login-content">
+      <button class="close-modal" aria-label="Cerrar">&times;</button>
+      <div class="login-header">
+        <h2 id="login-title">Iniciar Sesión</h2>
+        <p>Ingresa tus credenciales para acceder</p>
+      </div>
+      <form id="loginForm" class="login-form" novalidate>
+        <div id="loginMessage" class="alert" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <div class="input-with-icon">
+            <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="input-with-icon">
+            <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+            <button type="button" class="show-password" aria-label="Mostrar contraseña">
+              <i class="fas fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-options">
+  <a href="#" class="forgot-password" id="resetPasswordLink">¿Olvidaste tu contraseña?</a>
+</div>
+
+        <button type="submit" class="login-submit">Iniciar Sesión</button>
+        <div class="login-footer">
+          <p>¿No tienes una cuenta? <a href="#" class="register-link" id="registerLink">Regístrate</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Registro -->
+  <div class="login-modal" id="registerModal" aria-hidden="true" role="dialog" aria-labelledby="register-title">
+    <div class="login-content">
+      <button class="close-modal" aria-label="Cerrar">&times;</button>
+      <div class="login-header">
+        <h2 id="register-title">Registro</h2>
+        <p>Ingresa el UID de invitación y tus datos</p>
+      </div>
+      <form id="registerForm" class="login-form" novalidate>
+        <div id="registerMessage" class="alert" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="regUID">UID de Invitación</label>
+          <input type="text" id="regUID" name="uid" placeholder="Ingresa el UID proporcionado" required autocomplete="one-time-code">
+        </div>
+
+        <div class="form-group">
+          <label for="regEmail">Correo Electrónico</label>
+          <input type="email" id="regEmail" name="email" placeholder="Ingresa tu correo electrónico" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="regPassword">Contraseña</label>
+          <div class="input-with-icon">
+            <input type="password" id="regPassword" name="password" placeholder="Crea una contraseña segura" required autocomplete="new-password">
+            <button type="button" class="show-password" aria-label="Mostrar contraseña">
+              <i class="fas fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="login-submit">Registrarse</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Recuperar Contraseña -->
+  <div class="login-modal" id="forgotPasswordModal" aria-hidden="true" role="dialog" aria-labelledby="forgot-title">
+    <div class="login-content">
+      <button class="close-modal" aria-label="Cerrar">&times;</button>
+      <div class="login-header">
+        <h2 id="forgot-title">Recuperar Contraseña</h2>
+        <p>Ingresa tu correo electrónico para restablecer</p>
+      </div>
+      <form id="forgotPasswordForm" class="login-form" novalidate>
+        <div id="forgotMessage" class="alert" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="resetEmail">Correo Electrónico</label>
+          <input type="email" id="resetEmail" name="email" placeholder="Ingresa tu correo registrado" required autocomplete="email">
+        </div>
+
+        <button type="submit" class="login-submit">Enviar Instrucciones</button>
+        <div class="login-footer">
+          <p>¿Recordaste tu contraseña? <a href="#" class="login-link">Iniciar Sesión</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tus scripts -->
+  <script src="/ScriptLogin.js" type="module"></script>
+  <script src="/script.js" type="module"></script>
+  <script src="/mobile.js" defer></script>
+  <script src="/serviceFormscript.js" defer></script>
+
+  <!-- Mes de servicio (mes T-1) + Año dinámico + llamada a helpers de pendientes/recordatorio -->
+  <script>
+    function obtenerMesAnterior() {
+      const fecha = new Date();
+      fecha.setMonth(fecha.getMonth() - 1);
+      const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                     "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+      return meses[fecha.getMonth()];
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const mesAnterior = obtenerMesAnterior();
+      const el = document.getElementById("mesServicio");
+      if (el) el.textContent = `El mes de servicio que se enviará corresponde a: ${mesAnterior}`;
+
+      const yearEl = document.getElementById("year");
+      if (yearEl) yearEl.textContent = `© ${new Date().getFullYear()}`;
+
+      // Llama a las funciones si existen (definidas en serviceFormscript.js)
+      if (typeof window.updatePendientesBadge === 'function') window.updatePendientesBadge();
+      if (typeof window.updateRecordatorioEnvio === 'function') window.updateRecordatorioEnvio();
+    });
+  </script>
+</body>
+</html>

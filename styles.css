@@ -1,0 +1,530 @@
+/* ===========================
+   Variables globales
+   =========================== */
+:root {
+  /* --- Tema Púrpura --- */
+  --primary-color: #6A1B9A;        /* Púrpura principal (en lugar de tu azul) */
+  --primary-color-hover: #581885; /* Un púrpura más oscuro para el hover */
+  --accent-color: #AB47BC;        /* Un púrpura más vibrante para acentos (en lugar del azul claro) */
+  --notice-background: #F3E5F5;  /* Un lila muy pálido para los avisos (en lugar del azul pálido) */
+
+  /* --- Colores Neutrales (Estos se quedan igual) --- */
+  --secondary-color: #6c757d;
+  --light-bg: #f8f9fa;
+  --dark-bg: #212529;
+  --light-text: #f8f9fa;
+  --dark-text: #212529;
+  --transition: all 0.3s ease;
+
+  /* tokens (Estos probablemente se quedan igual, ya que usan las variables de arriba) */
+  --bg-color: var(--dark-bg);
+  --background-color-secondary: #fff;
+  --text-color-primary: #212529;
+  --text-color-secondary: #6c757d;
+  --border-color: #ddd;
+  --input-background: #fff;
+  --notice-background: var(--notice-background); /* Asegúrate que este use la variable */
+}
+/* ===========================
+   Base
+   =========================== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  transition: var(--transition);
+  overflow-x: hidden;
+}
+
+body.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+
+  /* tokens en oscuro */
+  --primary-color: #5d82c1;
+  --primary-color-hover: #6d92d1;
+  --background-color-secondary: #333;
+  --text-color-primary: #e0e0e0;
+  --text-color-secondary: #aaa;
+  --border-color: #555;
+  --input-background: #444;
+  --notice-background: #2a3952;
+  --accent-color: #5d82c1;
+}
+
+/* ===========================
+   Loading
+   =========================== */
+/* ===== Loader pro: limpio, minimal y consistente ===== */
+/* ===== Loader minimal: texto + tres puntitos ===== */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  background: var(--light-bg);          /* combina con tu sitio */
+  transition: opacity .4s ease, visibility .4s ease;
+}
+body.dark-mode .loading-screen {
+  background: var(--dark-bg);
+}
+
+.loading-content {
+  text-align: center;
+  /* heredaremos el color de marca para los puntitos */
+  color: var(--primary-color);
+}
+
+.loading-content h1 {
+  margin: 0;
+  font-size: clamp(1.2rem, 5.2vw, 1.9rem);
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--primary-color);          /* título en color de marca */
+}
+
+/* Reemplazamos el spinner por tres puntitos */
+.loading-spinner {
+  position: relative;
+  width: 10px;             /* diámetro del punto */
+  height: 10px;
+  margin: 12px auto 0;
+  border-radius: 50%;
+  background: currentColor; /* punto central */
+  /* color hereda de .loading-content -> var(--primary-color) */
+  opacity: .35;
+  animation: dotFade 1.2s infinite ease-in-out .2s;
+}
+.loading-spinner::before,
+.loading-spinner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .35;
+}
+.loading-spinner::before {
+  left: -18px;             /* punto izquierdo */
+  animation: dotFade 1.2s infinite ease-in-out 0s;
+}
+.loading-spinner::after {
+  left: 18px;              /* punto derecho */
+  animation: dotFade 1.2s infinite ease-in-out .4s;
+}
+
+@keyframes dotFade {
+  0%, 80%, 100% { opacity: .25; transform: translateY(0); }
+  40%           { opacity: 1;    transform: translateY(-2px); }
+}
+
+/* Ocultar loader al terminar (ya lo manejas con .hidden en JS) */
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Motion-safe: si el usuario prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner,
+  .loading-spinner::before,
+  .loading-spinner::after {
+    animation: none !important;
+    opacity: .6;
+  }
+}
+
+
+/* ===========================
+   Header
+   =========================== */
+header {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: #fff;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  position: sticky; top: 0;
+  z-index: 9998; /* por encima del overlay */
+  transition: var(--transition);
+}
+.header-container {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.logo {
+  font-size: 1.5rem; font-weight: 700; text-decoration: none; color: #fff;
+  display: flex; align-items: center;
+}
+.logo i { margin-right: .5rem; font-size: 1.8rem; }
+
+.nav-menu { display: flex; gap: 1.5rem; align-items: center; }
+.nav-item { position: relative; padding: .5rem 0; }
+
+.nav-link {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: var(--transition);
+  padding: .5rem 0;
+  position: relative;
+}
+.nav-link::after {
+  content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0;
+  background-color: #fff; transition: var(--transition);
+}
+.nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+.login-btn {
+  background-color: #fff; color: var(--primary-color);
+  border: none; padding: .5rem 1rem; border-radius: 50px; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+
+.dark-mode-toggle {
+  background: none; border: none; color: #fff; cursor: pointer;
+  font-size: 1.2rem; padding: .5rem; display: flex; align-items: center; gap: .5rem;
+}
+.mobile-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+
+/* ===========================
+   Welcome banner
+   =========================== */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+  color: #fff; text-align: center; padding: 2rem 1rem; margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1); animation: fadeIn 1s ease-out;
+}
+.welcome-banner h1 { font-size: 2.5rem; margin: 0; text-shadow: 1px 1px 3px rgba(0,0,0,.2); }
+@keyframes fadeIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===========================
+   Footer
+   =========================== */
+footer {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: #fff; padding: 3rem 2rem 2rem; margin-top: 4rem; transition: var(--transition);
+}
+.footer-container {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 2rem;
+}
+.footer-section h3 { margin-bottom: 1.2rem; font-size: 1.2rem; position: relative; padding-bottom: .5rem; }
+.footer-section h3::after { content: ''; position: absolute; left: 0; bottom: 0; height: 2px; width: 50px; background-color: #fff; }
+.footer-links { list-style: none; padding: 0; margin: 0; }
+.footer-links li { margin-bottom: .8rem; }
+.footer-links a { color: rgba(255,255,255,.8); text-decoration: none; transition: var(--transition); }
+.footer-links a:hover { color: #fff; padding-left: 5px; }
+
+.social-links { display: flex; gap: 1rem; margin-top: 1rem; }
+.social-links a {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; width: 40px; background-color: rgba(255,255,255,.1);
+  border-radius: 50%; color: #fff; transition: var(--transition);
+}
+.social-links a:hover { background-color: #fff; color: var(--primary-color); transform: translateY(-3px); }
+
+.footer-bottom {
+  max-width: 1200px; margin: 2rem auto 0; padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,.1);
+  text-align: center; font-size: .9rem; color: rgba(255,255,255,.7);
+  width: 100%; display: flex; justify-content: center; align-items: center;
+}
+
+/* ===========================
+   Formulario (general)
+   =========================== */
+.form-container {
+  max-width: 800px; margin: 0 auto; background-color: #fff; border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.1); padding: 2rem; margin-top: 2rem; transition: var(--transition);
+}
+body.dark-mode .form-container { background-color: #2c3034; box-shadow: 0 5px 15px rgba(0,0,0,.3); }
+
+.form-header { text-align: center; margin-bottom: 2rem; }
+.form-header h2 { color: var(--primary-color); margin-bottom: .5rem; }
+.form-header p { color: var(--secondary-color); }
+
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; margin-bottom: .5rem; font-weight: 500; }
+
+.form-control {
+  width: 100%; padding: .75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; transition: var(--transition);
+}
+body.dark-mode .form-control { background-color: #343a40; border-color: #495057; color: #fff; }
+.form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74,107,255,.25); outline: none; }
+.form-control:disabled { background-color: #e9ecef; cursor: not-allowed; }
+body.dark-mode .form-control:disabled { background-color: #495057; color: #adb5bd; }
+
+.form-select {
+  width: 100%; padding: .75rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 1rem center; background-size: 16px 12px;
+}
+body.dark-mode .form-select { background-color: #343a40; border-color: #495057; color: #fff; }
+
+.radio-group { display: flex; gap: 1.5rem; margin-top: .5rem; flex-wrap: wrap; }
+.radio-option { display: flex; align-items: center; cursor: pointer; padding: 8px 12px; border-radius: 5px; background-color: rgba(0,0,0,.05); min-height: 44px; }
+.radio-option input { margin-right: .5rem; min-width: 20px; min-height: 20px; }
+
+.submit-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: #fff; border: none; padding: .75rem 1.5rem; border-radius: 50px; font-weight: 600; cursor: pointer; transition: var(--transition);
+  box-shadow: 0 4px 10px rgba(0,0,0,.1); display: block; margin: 0 auto; font-size: 1rem;
+}
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,.15); }
+textarea.form-control { min-height: 120px; resize: vertical; }
+
+/* Avisos por rol */
+.role-notice {
+  background-color: #e7f3ff; border-left: 4px solid var(--primary-color);
+  padding: 1rem; margin-bottom: 1.5rem; border-radius: 0 5px 5px 0; display: none;
+}
+body.dark-mode .role-notice { background-color: #2b3035; border-left: 4px solid var(--primary-color); }
+.role-notice h3 { margin-top: 0; color: var(--primary-color); font-size: 1.1rem; }
+.role-notice p { margin-bottom: .5rem; }
+.role-notice strong { color: var(--primary-color); }
+.role-notice ul { margin: .5rem 0; padding-left: 1.5rem; }
+.role-notice li { margin-bottom: .5rem; }
+
+/* ===========================
+   Content + aparición
+   =========================== */
+.content { min-height: 80vh; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+
+.main-content {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+.main-content.visible { opacity: 1; transform: translateY(0); }
+
+/* ===========================
+   Responsive general
+   =========================== */
+@media (max-width: 768px) {
+  .mobile-toggle { display: block; }
+  .welcome-banner h1 { font-size: 1.8rem; }
+
+  /* Formularios */
+  .form-container { width: 100%; padding: 15px; margin: 10px 0; }
+  .form-group { margin-bottom: 15px; }
+  .form-control, .form-select { padding: 12px; font-size: 16px; } /* evita zoom iOS */
+  button, .submit-btn, .login-btn { min-height: 44px; padding: 10px 15px; }
+
+  /* Footer */
+  .footer-container { flex-direction: column; text-align: center; }
+  .footer-section { width: 100%; margin-bottom: 20px; }
+}
+
+/* iOS Safe Area */
+@supports (-webkit-touch-callout: none) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .header-container { padding-top: max(10px, env(safe-area-inset-top)); }
+  .nav-menu { padding-bottom: env(safe-area-inset-bottom); }
+  .login-modal {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Accesibilidad táctil y fuentes en inputs */
+input, select, textarea, button, .radio-option { touch-action: manipulation; }
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea { font-size: 16px; }
+
+/* ===========================
+   FIXES DEL MODAL (login)
+   =========================== */
+.login-content .input-with-icon { position: relative; width: 100%; }
+.login-content .input-with-icon input { width: 100%; padding-right: 2.75rem; box-sizing: border-box; }
+.login-content .input-with-icon .show-password {
+  position: absolute; right: .6rem; top: 50%; transform: translateY(-50%);
+  width: 2.25rem; height: 2.25rem; display: grid; place-items: center;
+  border: 0; background: transparent; cursor: pointer; color: #5f6b7a; opacity: .9;
+}
+.login-content .input-with-icon .show-password i { font-size: 1.05rem; line-height: 1; }
+.login-content .input-with-icon .show-password:hover { opacity: 1; }
+.login-content .input-with-icon .show-password:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; border-radius: .5rem; }
+body.dark-mode .login-content .input-with-icon .show-password { color: #c6cbd2; }
+
+.login-modal .login-content { position: relative; }
+.login-modal .close-modal {
+  position: absolute; top: .75rem; right: .75rem; border: 0; background: #fff;
+  width: 2rem; height: 2rem; border-radius: .5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1); cursor: pointer; line-height: 1;
+}
+body.dark-mode .login-modal .close-modal { background: #1f2937; color: #e5e7eb; }
+
+/* ===========================
+   NAV RESPONSIVE OFF-CANVAS
+   =========================== */
+@media (max-width: 768px) {
+  /* Botón hamburguesa táctil */
+  .mobile-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: .35rem .6rem; border: 1px solid rgba(255,255,255,.35);
+    border-radius: .5rem; line-height: 1;
+  }
+
+  /* Panel lateral derecho */
+  header .nav-menu {
+    position: fixed !important;
+    top: 0; right: -100%;
+    height: 100vh; width: 80%; max-width: 320px;
+    background: var(--dark-bg); color: #fff;
+    flex-direction: column; align-items: flex-start;
+    padding: 5rem 1.25rem 2rem;
+    gap: 1rem;
+    box-shadow: -6px 0 18px rgba(0,0,0,.25);
+    transition: right .3s ease;
+    z-index: 10000; /* por encima del overlay */
+    pointer-events: auto;
+  }
+  header .nav-menu.active { right: 0; }
+
+  /* Links del panel */
+  header .nav-menu .nav-item { width: 100%; }
+  header .nav-menu .nav-link {
+    display: block; width: 100%; color: #fff; font-size: 1.05rem;
+    padding: .75rem 0; text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  header .nav-menu .nav-link::after { display: none !important; }
+
+  /* Botones dentro del panel */
+  header .nav-menu .dark-mode-toggle { color: #fff; padding-left: 0; }
+  header .nav-menu .login-btn { width: 100%; justify-content: center; }
+}
+
+/* Overlay transparente y sin capturar clics */
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  opacity: 1;
+  pointer-events: none;      /* <- importante */
+  transition: opacity .3s ease;
+  z-index: 9990;
+}
+.nav-backdrop.active {
+  background: transparent;
+  opacity: 1;
+  pointer-events: none;      /* <- importante */
+}
+
+
+/* ===== Orden de capas (asegura interacción del menú) ===== */
+header { z-index: 9998; }              /* header por encima del overlay */
+header .nav-menu { z-index: 10000; }   /* panel por encima del overlay */
+.nav-backdrop { z-index: 9990; }       /* overlay bajo el panel */
+.login-modal { z-index: 11000; }       /* modal por encima del panel */
+.login-modal .login-content { z-index: 11001; }
+
+/* ===== ALERTAS: fuerza visibilidad y estilos coherentes ===== */
+
+/* Base (más específico y robusto) */
+.login-modal .alert,
+.form-container .alert,
+.content .alert {
+  display: none;
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: .95rem;
+  line-height: 1.35;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+/* Clase para mostrar (evita depender de style inline) */
+.login-modal .alert.alert-show,
+.form-container .alert.alert-show,
+.content .alert.alert-show {
+  display: block !important;
+}
+
+/* Variantes (con !important para ganar a reglas previas) */
+.login-modal .alert-success,
+.form-container .alert-success,
+.content .alert-success {
+  background: rgba(34,197,94,.12) !important;
+  color: #166534 !important;
+  border-color: rgba(34,197,94,.25) !important;
+}
+
+.login-modal .alert-danger,
+.form-container .alert-danger,
+.content .alert-danger,
+.login-modal .alert-error,
+.form-container .alert-error,
+.content .alert-error {
+  background: rgba(239,68,68,.12) !important;
+  color: #7f1d1d !important;
+  border-color: rgba(239,68,68,.25) !important;
+}
+
+.login-modal .alert-warning,
+.form-container .alert-warning,
+.content .alert-warning {
+  background: rgba(245,158,11,.12) !important;
+  color: #78350f !important;
+  border-color: rgba(245,158,11,.25) !important;
+}
+
+.login-modal .alert-info,
+.form-container .alert-info,
+.content .alert-info {
+  background: rgba(59,130,246,.12) !important;
+  color: #1e3a8a !important;
+  border-color: rgba(59,130,246,.25) !important;
+}
+
+/* Dark mode */
+body.dark-mode .login-modal .alert-success,
+body.dark-mode .form-container .alert-success,
+body.dark-mode .content .alert-success {
+  background: rgba(34,197,94,.18) !important;
+  color: #bbf7d0 !important;
+  border-color: rgba(34,197,94,.35) !important;
+}
+body.dark-mode .login-modal .alert-danger,
+body.dark-mode .form-container .alert-danger,
+body.dark-mode .content .alert-danger,
+body.dark-mode .login-modal .alert-error,
+body.dark-mode .form-container .alert-error,
+body.dark-mode .content .alert-error {
+  background: rgba(239,68,68,.18) !important;
+  color: #fecaca !important;
+  border-color: rgba(239,68,68,.35) !important;
+}
+body.dark-mode .login-modal .alert-warning,
+body.dark-mode .form-container .alert-warning,
+body.dark-mode .content .alert-warning {
+  background: rgba(245,158,11,.18) !important;
+  color: #fde68a !important;
+  border-color: rgba(245,158,11,.35) !important;
+}
+body.dark-mode .login-modal .alert-info,
+body.dark-mode .form-container .alert-info,
+body.dark-mode .content .alert-info {
+  background: rgba(59,130,246,.18) !important;
+  color: #bfdbfe !important;
+  border-color: rgba(59,130,246,.35) !important;
+}
